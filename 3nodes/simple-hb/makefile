@@ -2,10 +2,10 @@ build:
 	sudo ./init.sh
 
 cleanup:
-	sudo docker stop peer1 peer2 peer3 || true
-	sudo docker rm peer1 peer2 peer3 || true
-	sudo docker network rm simple-hb-br || true
-	rm *.log
+	sudo docker stop peer1 peer2 peer3 || true > /dev/null
+	sudo docker rm peer1 peer2 peer3 || true > /dev/null
+	sudo docker network rm simple-hb-br || true > /dev/null
+	echo cleaned up
 
 1:
 	sudo docker run -it --name peer1 \
