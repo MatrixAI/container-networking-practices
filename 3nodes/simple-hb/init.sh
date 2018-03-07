@@ -31,11 +31,14 @@ cleanup
 
 docker build -t simple-hb .
 
+echo Docker image built
+
 docker network create \
   -d bridge \
   --subnet=10.0.4.0/24 \
   simple-hb-br
 
+echo Network simple-hb-br created
 
 sudo docker run --name peer1 \
   --network simple-hb-br \

@@ -97,7 +97,7 @@ class Server():
                 data_chunk = client.recv(50)
                 while data_chunk:
                     data += data_chunk
-                    data_chunk = b''
+                    data_chunk = client.recv(50)
                 print("Received heartbeat from {}".format(addr))
                 client.close()
                 self.threads[tid][1] = None
