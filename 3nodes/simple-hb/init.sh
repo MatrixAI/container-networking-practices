@@ -35,3 +35,22 @@ docker network create \
   -d bridge \
   --subnet=10.0.4.0/24 \
   simple-hb-br
+
+
+sudo docker run --name peer1 \
+  --network simple-hb-br \
+  --ip "10.0.4.21" \
+  --publish 8080:8080 \
+  simple-hb
+
+sudo docker run --name peer2 \
+  --network simple-hb-br \
+  --ip "10.0.4.22" \
+  --publish 8080:8080 \
+  simple-hb
+
+sudo docker run --name peer3 \
+  --network simple-hb-br \
+  --ip "10.0.4.23" \
+  --publish 8080:8080 \
+  simple-hb

@@ -73,10 +73,6 @@ class Server():
         while True:
             try:
                 client, addr = self.socket.accept()
-                if (addr[0] == socket.gethostname() and
-                    addr[1] == PORT): # Disable loopback
-                   client.close()
-                   continue
             except ConnectionAbortedError:
                 break
             found_thread = False
@@ -95,21 +91,27 @@ class Server():
         while True:
             if self.threads[tid][1]:
                 client, addr = self.threads[tid][1:]
+                print(client, addr)
                 ip = addr[0]
                 data = b''
                 data_chunk = client.recv(50)
                 while data_chunk:
                     data += data_chunk
                     data_chunk = b''
-                self.threads[thread_id][1].close()
+                self.threads[tid][1].close()
                 client.close()
+                self.threads[tid][1] = None
+                self.threads[tid][2] = None
             time.sleep(0.5)
 
 if __name__ == "__main__":
     client = Client()
     server = Server()
-    threading.Thread(target=server.serve(), daemon=True).start()
+    print('starting server')
+    threading.Thread(target=server.serve, daemon=True).start()
+    print("Server started")
     with open('/dev/urandom', 'rb') as f:
+        print("Start sending heartbeat")
         while True:
             client.broadcast(f.read(HEARTBEAT_SIZE))
             time.sleep(1)
