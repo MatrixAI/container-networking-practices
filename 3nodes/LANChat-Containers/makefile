@@ -17,12 +17,12 @@ cleanup:
 	sudo docker run -it --name peer2 \
 	  --network lanchat-br \
 	  --ip "10.0.3.22" \
-	  --publish 8080:8081 \
+	  --publish 8081:8080 \
 	  lanchat
 
 3:
 	sudo docker run -it --name peer3 \
 	  --network lanchat-br \
 	  --ip "10.0.3.23" \
-	  --publish 8080:8082 \
+	  --publish 8082:8080 \
 	  lanchat
