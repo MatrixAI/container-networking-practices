@@ -7,21 +7,21 @@ cleanup:
 	sudo docker network rm lanchat-br || true
 
 1:
-	docker run -it --name peer1 \
+	sudo docker run -it --name peer1 \
 	  --network lanchat-br \
 	  --ip "10.0.3.21" \
 	  --publish 8080:8080 \
 	  lanchat
 
 2:
-	docker run -it --name peer2 \
+	sudo docker run -it --name peer2 \
 	  --network lanchat-br \
 	  --ip "10.0.3.21" \
 	  --publish 8080:8080 \
 	  lanchat
 
 3:
-	docker run -it --name peer3 \
+	sudo docker run -it --name peer3 \
 	  --network lanchat-br \
 	  --ip "10.0.3.21" \
 	  --publish 8080:8080 \

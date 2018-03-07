@@ -1,11 +1,11 @@
 ###
-### Instantiate 3 docker containers wth LANChat running
+### Instantiate 3 docker containers wth Simple-hb running
 ###
 
 cleanup() {
   docker stop peer1 peer2 peer3
   docker rm peer1 peer2 peer3
-  docker network rm lanchat-br 2> /dev/null
+  docker network rm simple-hb-br 2> /dev/null
 }
 
 if [ ! -f "./Dockerfile" ]

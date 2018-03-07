@@ -73,8 +73,8 @@ class Server():
         while True:
             try:
                 client, addr = self.socket.accept()
-                if addr[0] == socket.gethostname() and
-                   addr[1] == PORT: # Disable loopback
+                if (addr[0] == socket.gethostname() and
+                    addr[1] == PORT): # Disable loopback
                    client.close()
                    continue
             except ConnectionAbortedError:
