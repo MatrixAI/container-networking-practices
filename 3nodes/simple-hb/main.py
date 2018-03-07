@@ -18,16 +18,22 @@ class Client():
         if not isinstance(message, bytes):
             raise ValueError('Message should be in bytes')
         print("Sending hb to {}".format(peer))
-        threading.Thread(target=self.__send_worker,
+        t = threading.Thread(target=self.__send_worker,
                          args=(peer, message),
-                         daemon=True).start()
+                         daemon=True)
+        t.start()
+        return t
 
     def broadcast(self, message):
         """Broadcast a message to all peers."""
         if not isinstance(message, bytes):
             raise ValueError("Message should be in bytes")
+        t = []
         for p in PEERS:
-            self.unicast(p, message)
+            t.append(self.unicast(p, message))
+        for i in t:
+            i.join()
+
 
     def __send_worker(self, peer, message):
         try:

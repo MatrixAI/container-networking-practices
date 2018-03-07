@@ -35,7 +35,7 @@ echo Docker image built
 
 docker network create \
   -d bridge \
-  --subnet=10.0.4.0/24 \
+  --subnet=10.0.4.1/24 \
   simple-hb-br
 
 echo Network simple-hb-br created
