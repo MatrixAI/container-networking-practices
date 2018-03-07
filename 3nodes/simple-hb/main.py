@@ -3,10 +3,11 @@
 import socket
 import threading
 import time
+import datetime
 
 HOSTNAME = "0.0.0.0"
-PORT = 8080
-PEERS = [("10.0.4.21", 8080), ("10.0.4.22", 8080), ("10.0.4.23", 8080)]
+PORT = 8081
+PEERS = [("127.0.0.1", 8080), ("127.0.0.1", 8081), ("127.0.0.1", 8082)]
 HEARTBEAT_SIZE = 10 # in bytes
 
 
@@ -17,7 +18,6 @@ class Client():
     def unicast(self, peer, message):
         if not isinstance(message, bytes):
             raise ValueError('Message should be in bytes')
-        print("Sending hb to {}".format(peer))
         t = threading.Thread(target=self.__send_worker,
                          args=(peer, message),
                          daemon=True)
@@ -41,6 +41,8 @@ class Client():
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 sock.connect(peer)
                 sock.sendall(message)
+                sock.close()
+                print('{} Sent heartbeat to {}'.format(str(datetime.datetime.now()), peer))
         except ConnectionRefusedError:
             pass
         except TimeoutError:
@@ -58,6 +60,7 @@ class Server():
         try:
             self.socket.bind((HOSTNAME, PORT))
         except OSError:
+            print('Error: port taken')
             exit(1)
 
     def serve(self):
@@ -100,7 +103,7 @@ class Server():
                 ip = addr[0]
                 data = b''
                 data_chunk = client.recv(HEARTBEAT_SIZE)
-                print("Received heartbeat from {}".format(addr))
+                print("{} Received heartbeat from {}".format(str(datetime.datetime.now()), addr))
                 client.close()
                 self.threads[tid][1] = None
                 self.threads[tid][2] = None
@@ -109,11 +112,11 @@ class Server():
 if __name__ == "__main__":
     client = Client()
     server = Server()
-    print('starting server')
+    print('{} starting server'.format(str(datetime.datetime.now())))
     threading.Thread(target=server.serve, daemon=True).start()
-    print("Server started")
+    print("{} Server started".format(str(datetime.datetime.now())))
     with open('/dev/urandom', 'rb') as f:
-        print("Start sending heartbeat")
+        print("{} Start sending heartbeat".format(str(datetime.datetime.now())))
         while True:
             client.broadcast(f.read(HEARTBEAT_SIZE))
             time.sleep(1)
