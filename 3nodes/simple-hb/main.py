@@ -17,6 +17,7 @@ class Client():
     def unicast(self, peer, message):
         if not isinstance(message, bytes):
             raise ValueError('Message should be in bytes')
+        print("Sending hb to {}".format(peer))
         threading.Thread(target=self.__send_worker,
                          args=(peer, message),
                          daemon=True).start()
@@ -34,7 +35,7 @@ class Client():
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 address = peer[1]
                 sock.connect(peer)
-                sock.sendall(bytes(message))
+                sock.sendall(message)
         except ConnectionRefusedError:
             pass
         except TimeoutError:
@@ -91,14 +92,13 @@ class Server():
         while True:
             if self.threads[tid][1]:
                 client, addr = self.threads[tid][1:]
-                print(client, addr)
                 ip = addr[0]
                 data = b''
                 data_chunk = client.recv(50)
                 while data_chunk:
                     data += data_chunk
                     data_chunk = b''
-                self.threads[tid][1].close()
+                print("Received heartbeat from {}".format(addr))
                 client.close()
                 self.threads[tid][1] = None
                 self.threads[tid][2] = None
