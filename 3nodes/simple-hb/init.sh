@@ -44,7 +44,7 @@ sudo docker run -d --name peer1 \
   --network simple-hb-br \
   --ip "10.0.4.21" \
   --publish 8080:8080 \
-  simple-hb > /dev/null
+  simple-hb > peer1.log
 
 echo peer1 running
 
@@ -52,7 +52,7 @@ sudo docker run -d --name peer2 \
   --network simple-hb-br \
   --ip "10.0.4.22" \
   --publish 8081:8080 \
-  simple-hb > /dev/null
+  simple-hb > peer2.log
 
 echo peer2 running
 
@@ -60,6 +60,6 @@ sudo docker run -d --name peer3 \
   --network simple-hb-br \
   --ip "10.0.4.23" \
   --publish 8082:8080 \
-  simple-hb > /dev/null
+  simple-hb > peer3.log
 
 echo peer3 running
