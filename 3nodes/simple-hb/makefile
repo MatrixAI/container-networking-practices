@@ -16,11 +16,11 @@ cleanup:
 	sudo docker run --name peer2 \
 	  --network simple-hb-br \
 	  --ip "10.0.4.22" \
-	  --publish 8080:8080 \
+	  --publish 8080:8081 \
 	  simple-hb
 3:
 	sudo docker run --name peer3 \
 	  --network simple-hb-br \
 	  --ip "10.0.4.23" \
-	  --publish 8080:8080 \
+	  --publish 8080:8082 \
 	  simple-hb
