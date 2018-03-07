@@ -33,7 +33,6 @@ class Client():
         try:
             # Using TCP socket, change to RAW or DGRAM if you like
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                address = peer[1]
                 sock.connect(peer)
                 sock.sendall(message)
         except ConnectionRefusedError:
@@ -94,10 +93,7 @@ class Server():
                 client, addr = self.threads[tid][1:]
                 ip = addr[0]
                 data = b''
-                data_chunk = client.recv(50)
-                while data_chunk:
-                    data += data_chunk
-                    data_chunk = client.recv(50)
+                data_chunk = client.recv(HEARTBEAT_SIZE)
                 print("Received heartbeat from {}".format(addr))
                 client.close()
                 self.threads[tid][1] = None
