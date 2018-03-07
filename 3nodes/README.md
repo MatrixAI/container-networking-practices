@@ -1,7 +1,7 @@
 # 3nodes
 This directory contains two projects:
-- [**LANChat Containers**](#LANChat-containers): creates three docker containers running LANChat.
-- [**Simple Heartbeat**](#Simple HB): runs three docker containers with simple heartbeat communication (tunable heartbeat).
+- [lanchat containers](#lanchat-containers): creates three docker containers running LANChat.
+- [simple heartbeat](#simple-hb): runs three docker containers with simple heartbeat communication (tunable heartbeat).
 
 ## LANChat-containers
 ### Prerequisites
@@ -45,7 +45,7 @@ docker run -it --name peer3 \
 ### Clean up
 Run `make cleanup`
 
-## Simple HB
+## Simple-HB
 I've written a python script for 3 peers to talk and receive random messages of arbitrary size via TCP connection. packet sizes can be changed by altering the `HEARTBEAT_SIZE` global variable in `main.py`.
 
 ### Prerequisites
