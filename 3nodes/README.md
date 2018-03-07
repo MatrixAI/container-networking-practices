@@ -1,7 +1,7 @@
-# 3nodes-oliver
+# 3nodes
 This directory contains two projects:
-- **LANChat Containers**: creates three docker containers running LANChat.
-- **Simple Heartbeat**: runs three docker containers with simple heartbeat communication (tunable heartbeat).
+- [**LANChat Containers**](#LANChat-containers): creates three docker containers running LANChat.
+- [**Simple Heartbeat**](#Simple HB): runs three docker containers with simple heartbeat communication (tunable heartbeat).
 
 ## LANChat-containers
 ### Prerequisites
@@ -46,6 +46,8 @@ docker run -it --name peer3 \
 Run `make cleanup`
 
 ## Simple HB
+I've written a python script for 3 peers to talk and receive random messages of arbitrary size via TCP connection. packet sizes can be changed by altering the `HEARTBEAT_SIZE` global variable in `main.py`.
+
 ### Prerequisites
 - A linux machine
 - Python3.6
@@ -54,6 +56,8 @@ Run `make cleanup`
 ### Running simple hb
 1. Run `make` in the `simple-hb` directory to configure and download
 all necessary files, configurations and fire up 3 containers.
+
+*Note: Different to `LANChat-Containers` this program doesn't require GUI, so it will simply run in the background after the first step.*
 
 ### Clean up
 Run `make cleanup`
