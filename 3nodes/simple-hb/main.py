@@ -6,8 +6,8 @@ import time
 import datetime
 
 HOSTNAME = "0.0.0.0"
-PORT = 8081
-PEERS = [("127.0.0.1", 8080), ("127.0.0.1", 8081), ("127.0.0.1", 8082)]
+PORT = 8080
+PEERS = [("10.0.4.21", 8080), ("10.0.4.22", 8081), ("10.0.4.23", 8082)]
 HEARTBEAT_SIZE = 10 # in bytes
 
 
