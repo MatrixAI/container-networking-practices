@@ -44,3 +44,16 @@ docker run -it --name peer3 \
 
 ### Clean up
 Run `make cleanup`
+
+## Simple HB
+### Prerequisites
+- A linux machine
+- Python3.6
+- docker
+
+### Running simple hb
+1. Run `make` in the `simple-hb` directory to configure and download
+all necessary files, configurations and fire up 3 containers.
+
+### Clean up
+Run `make cleanup`
