@@ -4,16 +4,17 @@
 
 # Clean up
 cleanup() {
-  ip netns del A-router 2> /dev/null
+  ip netns del A-dhcp 2> /dev/null
   ip netns del A-node 2> /dev/null
+  ip netns del B-router 2> /dev/null
+  ip netns del B-node 2> /dev/null
 }
 
 # configure-network-A
 
   cleanup
 
-  # Create containers: A1 and A2 belongs to network A
-  # B3 and B4 belongs to network B
+  # Create namespaces for network A
   ip netns add A-router
   ip netns add A-node
 
@@ -38,13 +39,34 @@ cleanup() {
   ip netns exec A-node ip link set eth0 up
   ip netns exec A-node dhclient -v eth0
 
-  # Configure NAT and port forwarding
-  sysctl net.ipv4.conf.all.forwarding=1
-
-  iptables -t nat -A POSTROUTING -o bridge0 -j MASQUERADE
 
 # configure-network-B
 
   ip netns add B-router
   ip netns exec B-router brctl addbr bridge0
   ip netns exec B-router ifconfig bridge0 "10.0.4.1/24" up
+
+# configure router
+
+  # Set up a default gateway for A-router
+  ip netns exec A-router ip link add eth0 type veth peer name tar0
+  # Bring up the devices
+  ip netns exec A-router
+
+  # Configure NAT and port forwarding
+  sysctl net.ipv4.conf.all.forwarding=1
+
+  ip netns exec A-router iptables --flush
+  # Nat flush must be explicity stated
+  ip netns exec A-router iptables --table nat --flush
+  ip netns exec A-router iptables --table nat --delete-chain
+
+
+  ip netns exec A-router iptables --table nat \
+                                  --append POSTROUTING \
+                                  -o eth0 \
+                                  -j MASQUERADE
+  # Place the target at B-router
+  ip netns exec A-router ip link tar0 set netns B-router
+
+  # Apply the configuration
