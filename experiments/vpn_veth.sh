@@ -4,6 +4,8 @@
 
 # Clean up
 cleanup() {
+  # Clean lease files for dhclient
+  rm /var/lib/dhcp/dhclient.*
   ip netns del A-router 2> /dev/null
   ip netns del A-node 2> /dev/null
   ip netns del B-node 2> /dev/null
