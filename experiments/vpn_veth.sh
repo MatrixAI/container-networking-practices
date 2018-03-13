@@ -6,7 +6,7 @@
 cleanup() {
   ip netns del A-router 2> /dev/null
   ip netns del A-node 2> /dev/null
-  ip netns del B-router 2> /dev/null
+  ip netns del B-node 2> /dev/null
 }
 
 # configure network A
@@ -16,7 +16,7 @@ cleanup() {
   # Create namespaces for network A
   ip netns add A-router
   ip netns add A-node
-  ip netns add B-router
+  ip netns add B-node
 
   # Routers have bridges to join the networks via veth pairs
   ip netns exec A-router brctl addbr bridge0
@@ -40,29 +40,24 @@ cleanup() {
   ip netns exec A-node dhclient -v eth0
 
 # configure network B
-  ip netns exec B-router brctl addbr bridge0
-  ip netns exec B-router ifconfig bridge0 "10.0.4.0/24" up
+  ip netns exec B-node ip link add eth0 type veth peer name veth1
+  ip netns exec B-node ip addr add "10.0.4.2/24" dev eth0
+  ip netns exec B-node ip link set eth0 up
+  ip netns exec B-node ip link set veth1 netns A-router
 
-# configure router
+  # Set the default gateway for B-node
+  ip netns exec B-node ip route add default via "10.0.4.1" dev eth0
 
-  # Set up a default gateway for A-router
-  ip netns exec A-router ip link add eth0 type veth peer name veth2
-
-  # Bring up the devices
-  ip netns exec A-router ifconfig eth0 "10.0.5.1" up # Gateway
-  ip netns exec A-router ip link set veth2 netns B-router
-  ip netns exec B-router ip link set veth2 up
-  ip netns exec B-router brctl addif bridge0 veth2
-
-  # Set A-route's default gateway to "10.0.5.1"
-  ip netns exec A-router ip route add default via "10.0.5.1"
+# configure A-router
+  ip netns exec A-router ip addr add "10.0.4.1/24" dev veth1
+  ip netns exec A-router ip link set veth1 up
 
   # Configure NAT and port forwarding
   sysctl net.ipv4.conf.all.forwarding=1
   ip netns exec A-router iptables --flush
-  ip netns exec A-router iptables --flush
   ip netns exec A-router iptables --table nat --flush
   ip netns exec A-router iptables --table nat --delete-chain
 
-
-  ip netns exec A-router iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+  ip netns exec A-router iptables -t nat -A POSTROUTING -o bridge0 -j MASQUERADE
+  ip netns exec A-router iptables -A FORWARD -i bridge0 -o veth1 -j ACCEPT
+  ip netns exec A-router iptables -A FORWARD -o bridge0 -i veth1 -j ACCEPT
