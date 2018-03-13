@@ -40,7 +40,7 @@ cleanup() {
 
   # Get an address from the dhcp server using `dhclient`
   ip netns exec A-node ip link set veth0 up
-  ip netns exec A-node dhclient -v veth0 & >> pid.log
+  ip netns exec A-node dhclient -v veth0
 
 # configure network B
   ip netns exec B-node ip link add veth2 type veth peer name veth3
