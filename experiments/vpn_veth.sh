@@ -19,9 +19,10 @@ cleanup() {
   ip netns add B-node
 
   # Routers have bridges to join the networks via veth pairs
-  ip netns exec A-router brctl addbr bridge0
+  ip netns exec A-router ip link add bridge0 type bridge
   # Bring bridge interface up
-  ip netns exec A-router ifconfig bridge0 "10.0.3.1/24" up
+  ip netns exec A-router ip addr add "10.0.3.1/24" dev bridge0
+  ip netns exec A-router ip link set bridge0 up
   ip netns exec A-router ip route flush dev bridge0
   ip netns exec A-router ip route add "10.0.3.0/24" dev bridge0
 
@@ -33,7 +34,7 @@ cleanup() {
   ip netns exec A-router ip link add eth0 type veth peer name veth0
   ip netns exec A-router ip link set veth0 up
   ip netns exec A-router ip link set eth0 netns A-node
-  ip netns exec A-router brctl addif bridge0 veth0
+  ip netns exec A-router ip link set dev veth0 master bridge0
 
   # Get an address from the dhcp server using `dhclient`
   ip netns exec A-node ip link set eth0 up
