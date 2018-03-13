@@ -4,7 +4,8 @@
 
 # Clean up
 cleanup() {
-  kill $(cat pid.log 2> /dev/null) 2> /dev/null
+  kill -9 $(ps -eopid,cmd | grep dnsmasq | cut -f 2 -d ' ' | head -n -1)
+  kill -9 $(ps -eopid,cmd | grep dhclient | cut -f 2 -d ' ' | head -n -1)
   ip netns del A-router 2> /dev/null
   ip netns del A-node 2> /dev/null
   ip netns del B-node 2> /dev/null
@@ -29,8 +30,7 @@ cleanup() {
 
   # Setting up dhcp using `dnsmasq`
   ip netns exec A-router dnsmasq \
-    --dhcp-range=10.0.3.3,10.0.3.254,255.255.255.0 --interface=a-router-br0 && \
-    echo $! > pid.log
+    --dhcp-range=10.0.3.3,10.0.3.254,255.255.255.0 --interface=a-router-br0
 
   # Linking A-router and A-node
   ip netns exec A-router ip link add veth0 type veth peer name veth1
@@ -40,8 +40,7 @@ cleanup() {
 
   # Get an address from the dhcp server using `dhclient`
   ip netns exec A-node ip link set veth0 up
-  ip netns exec A-node dhclient -v veth0 && \
-    echo $! >> pid.log
+  ip netns exec A-node dhclient -v veth0 & >> pid.log
 
 # configure network B
   ip netns exec B-node ip link add veth2 type veth peer name veth3
