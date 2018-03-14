@@ -29,6 +29,10 @@ cleanup() {
   ip netns exec A-router ip route flush dev a-router-br0
   ip netns exec A-router ip route add "10.0.3.0/24" dev a-router-br0
 
+  # Setting up dhcp using `dnsmasq`
+  ip netns exec A-router dnsmasq \
+    --dhcp-range=10.0.3.3,10.0.3.254,255.255.255.0 --interface=a-router-br0
+
   # Linking A-router and A-node
   ip netns exec A-router ip link add veth0 type veth peer name veth1
   ip netns exec A-router ip link set veth1 up
@@ -42,8 +46,7 @@ cleanup() {
 
 # configure network B
   ip netns exec A-router ip link add mvlan0 \
-                            link a-router-br \
-                            type macvlan mode bridge
+                            type macvlan mode vepa
   ip netns exec A-router ip link set mvlan0 netns B-node
-  ip netns exec B-node ip link mvlan0 up
+  ip netns exec B-node ip link set mvlan0 up
   ip netns exec B-node dhclient -v mvlan0
