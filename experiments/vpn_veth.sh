@@ -4,6 +4,7 @@
 
 # Clean up
 cleanup() {
+  ip netns exec A-node dhclient -r -v
   kill -9 $(ps -eopid,cmd | grep dnsmasq | cut -f 2 -d ' ' | head -n -1)
   kill -9 $(ps -eopid,cmd | grep dhclient | cut -f 2 -d ' ' | head -n -1)
   ip netns del A-router 2> /dev/null
@@ -41,7 +42,6 @@ cleanup() {
   # Get an address from the dhcp server using `dhclient`
   ip netns exec A-router ip link set lo up
   ip netns exec A-node ip link set veth0 up
-  ip netns exec A-node dhclient -r -v -lf /var/lib/dhcp/dhclient.lease
   ip netns exec A-node dhclient -v veth0
 
 # configure network B
