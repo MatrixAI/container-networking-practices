@@ -5,8 +5,8 @@
 # Clean up
 cleanup() {
   ip netns exec A-node dhclient -r -v
-  kill -9 $(ps -eopid,cmd | grep dnsmasq | cut -f 2 -d ' ' | head -n -1)
-  kill -9 $(ps -eopid,cmd | grep dhclient | cut -f 2 -d ' ' | head -n -1)
+  kill -9 $(ps -eopid,cmd | grep dnsmasq | cut -f 2 -d ' ' | head -n -1) 2> /dev/null
+  kill -9 $(ps -eopid,cmd | grep dhclient | cut -f 2 -d ' ' | head -n -1) 2> /dev/null
   ip netns del A-router 2> /dev/null
   ip netns del A-node 2> /dev/null
   ip netns del B-node 2> /dev/null
