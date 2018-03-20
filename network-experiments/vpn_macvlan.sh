@@ -45,8 +45,9 @@ cleanup() {
   ip netns exec A-node dhclient -v veth0
 
 # configure network B
-  ip netns exec A-router ip link add mvlan0 \
-                            type macvlan mode vepa
+  ip netns exec A-router ip link add name mvlan0 \
+                            link a-router-br0 \
+                            type macvlan mode bridge
   ip netns exec A-router ip link set mvlan0 netns B-node
   ip netns exec B-node ip link set mvlan0 up
   ip netns exec B-node dhclient -v mvlan0
