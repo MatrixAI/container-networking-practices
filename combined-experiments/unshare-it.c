@@ -49,6 +49,7 @@ static void mountFS(void) {
   mkdir(mount_point, 0555);
   if (mount("sys", mount_point, "sysfs", 0, NULL) == -1)
       errExit("mount");
+  printf("Mounting sysfs at %s\n", mount_point);
 
 }
 
@@ -63,7 +64,7 @@ static int childFunc(void* arg) {
 
   mountFS();
 
-  execvp("/bin/bash", argv);
+  execvp("/bin/sh", argv);
   errExit("execvp");
 }
 
@@ -93,7 +94,10 @@ int main(int argc, char *argv[]) {
       }
   }
 
-  int child_pid = clone(childFunc, child_stack + STACK_SIZE, flags | SIGCHLD, NULL);
+  int child_pid = clone(childFunc,
+                        child_stack + STACK_SIZE,
+                        flags | SIGCHLD,
+                        NULL);
 
   if (child_pid == -1)
     errExit("clone");
