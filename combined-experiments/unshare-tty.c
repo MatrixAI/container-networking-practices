@@ -4,13 +4,16 @@
   */
 
 #define _GNU_SOURCE
+#include <sys/mount.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <sched.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/wait.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #define errExit(msg)    do {perror(msg); exit(EXIT_FAILURE); \
                         } while (0)
@@ -31,13 +34,36 @@ static void usage(char* pname) {
   exit(EXIT_FAILURE);
 }
 
+static void mountFS(void) {
+  // Mount proc
+  char *mount_point = "/proc";
+
+  mkdir(mount_point, 0555);
+  if (mount("proc", mount_point, "proc", 0, NULL) == -1)
+      errExit("mount");
+  printf("Mounting procfs at %s\n", mount_point);
+
+  // Mount sys
+  mount_point = "/sys";
+
+  mkdir(mount_point, 0555);
+  if (mount("sys", mount_point, "sysfs", 0, NULL) == -1)
+      errExit("mount");
+
+}
+
 static int childFunc(void* arg) {
   char *argv[] = {"/bin/sh", 0};
 
-  if (chroot("./container/") == -1)
+  if (chdir("./rootfs/") == -1)
+    errExit("chdir");
+
+  if (chroot("./") == -1)
     errExit("chroot");
 
-  execvp("/bin/sh", argv);
+  mountFS();
+
+  execvp("/bin/bash", argv);
   errExit("execvp");
 }
 
