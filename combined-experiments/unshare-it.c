@@ -68,6 +68,11 @@ static int childFunc(void* arg) {
   errExit("execvp");
 }
 
+static void cgroupSetUp(void) {
+  // Check that cgroup is mounted
+
+}
+
 int main(int argc, char *argv[]) {
   int flags = 0, opt;
 
