@@ -34,11 +34,8 @@ static void usage(char* pname) {
 static int childFunc(void* arg) {
   char *argv[] = {"/bin/sh", 0};
 
-  /* Change hostname in UTS namespace of child */
-  char* hostname = "moku-s-container";
-
-  if (sethostname(hostname, strlen(hostname)) == -1)
-    errExit("sethostname");
+  if (chroot("./container/") == -1)
+    errExit("chroot");
 
   execvp("/bin/sh", argv);
   errExit("execvp");
