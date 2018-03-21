@@ -1,7 +1,7 @@
-/*
-  1. Create a container
-  2. Start a shell in a newly created container
-*/
+/**
+  * Run a shell in another namespace
+  * To run the code: sudo ./practice <options>
+  */
 
 #define _GNU_SOURCE
 #include <fcntl.h>
@@ -10,9 +10,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <string.h>
 
-#define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
+#define errExit(msg)    do {perror(msg); exit(EXIT_FAILURE); \
                         } while (0)
+#define STACK_SIZE (1024 * 1024)
+
+static char child_stack[STACK_SIZE];
 
 static void usage(char* pname) {
   fprintf(stderr, "Usage: %s [options]\n", pname);
@@ -27,6 +31,19 @@ static void usage(char* pname) {
   exit(EXIT_FAILURE);
 }
 
+static int childFunc(void* arg) {
+  char *argv[] = {"/bin/sh", 0};
+
+  /* Change hostname in UTS namespace of child */
+  char* hostname = "moku-s-container";
+
+  if (sethostname(hostname, strlen(hostname)) == -1)
+    errExit("sethostname");
+
+  execvp("/bin/sh", argv);
+  errExit("execvp");
+}
+
 int main(int argc, char *argv[]) {
   int flags = 0, opt;
 
@@ -39,12 +56,10 @@ int main(int argc, char *argv[]) {
 
   while ((opt = getopt(argc, argv, "+aimnpuU")) != -1) {
       switch (opt) {
-      case 'a': flags = CLONE_NEWNS |
-                        CLONE_NEWIPC |
-                        CLONE_NEWNET |
-                        CLONE_NEWPID |
-                        CLONE_NEWUTS |
-                        CLONE_NEWUSER;        break;
+      case 'a': flags = CLONE_NEWIPC | CLONE_NEWNS |
+                        CLONE_NEWNET | CLONE_NEWPID |
+                        CLONE_NEWUTS | CLONE_NEWUSER;
+                break;
       case 'i': flags |= CLONE_NEWIPC;        break;
       case 'm': flags |= CLONE_NEWNS;         break;
       case 'n': flags |= CLONE_NEWNET;        break;
@@ -55,10 +70,16 @@ int main(int argc, char *argv[]) {
       }
   }
 
-  if (unshare(flags) == -1)
-    errExit("unshare");
+  int child_pid = clone(childFunc, child_stack + STACK_SIZE, flags | SIGCHLD, NULL);
 
-  char *argv_inner[] = {"/bin/sh", NULL};
-  execvp(argv_inner[0], argv_inner);
-  errExit("execvp");
+  if (child_pid == -1)
+    errExit("clone");
+
+  printf("PID of child created by clone() is %d\n", child_pid);
+
+  if (waitpid(child_pid, NULL, 0) == -1)
+    errExit("waitpid");
+
+  printf("Parent terminating\n");
+  exit(0);
 }
