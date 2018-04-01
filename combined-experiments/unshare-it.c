@@ -64,13 +64,8 @@ static int childFunc(void* arg) {
 
   mountFS();
 
-  execvp("/bin/sh", argv);
+  execvp("/bin/sh", argv);  
   errExit("execvp");
-}
-
-static void cgroupSetUp(void) {
-  // Check that cgroup is mounted
-
 }
 
 int main(int argc, char *argv[]) {
