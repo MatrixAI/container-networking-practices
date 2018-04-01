@@ -3,18 +3,6 @@ cleanup() {
   docker network rm http-br 2> /dev/null
 }
 
-if [ ! -f "./Dockerfile" ]
-then
-  cat << EOF > Dockerfile
-# Pull base image.
-FROM python:3
-EXPOSE 8000
-CMD ["python3", "-m", "http.server"]
-EOF
-fi
-
-echo Dockerfile written
-
 cleanup
 
 docker build -t http-service .
