@@ -15,5 +15,4 @@ docker network create \
 sudo docker run -it --name http-server \
 	  --network http-br \
 	  --ip "10.0.5.2" \
-	  --publish 8000:8000 \
 	  http-service
