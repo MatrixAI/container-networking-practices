@@ -1,4 +1,4 @@
-uild:
+build:
 	sudo ./init.sh
 
 cleanup:
