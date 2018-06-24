@@ -1,0 +1,4 @@
+DB (postgres) is exposed on 10.0.5.3:1234
+HTTP is exposed on 10.0.5.2:8000
+
+use make to cleanup and build
