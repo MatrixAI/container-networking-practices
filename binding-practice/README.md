@@ -81,7 +81,7 @@ foreign import ccall "add" c_add :: CInt -> CInt -> CInt
 ```
 This line brings in the C function `"add"`, and change that into a Haskell function `c_add` that takes in two `CInt`s and returns a `CInt`.
 
-However, we want to use `Int` rather than `CInt`. And to do that we create another function `add :: Int -> Int -> Int` that does the same thing. In fact I don't think the `fromIntegral` casting function is even necessary, since I remember both `CInt` and `Int` are Integrals and they can cast to one another interchangeably. I could be wrong though.
+However, we want to use `Int` rather than `CInt`. And to do that we create another function `add :: Int -> Int -> Int` which calls `c_add`. In fact I don't think the `fromIntegral` casting function is even necessary, since I remember both `CInt` and `Int` are Integrals and they can cast to one another interchangeably. I could be wrong though.
 
 # After this
 - In the actual practice I also included some examples of impure function calls, which would involve [IO monads](https://github.com/MatrixAI/Emergence/blob/master/language/haskell/2018:07:03:monadic-io-and-ffi.md).
