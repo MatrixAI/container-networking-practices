@@ -38,7 +38,7 @@ c2hs is a Haskell FFI preprocessing tools that is useful for preprocessing
 # Set up package.yaml
 `package.yaml` is a file where to specifies all our Haskell build dependencies, which is read by stack when you do `stack build`.
 
-By the time I was writing this I was still using Cabal. The changes I made to [the cabal file](/container-practices/binding-practices/binding-practice.cabal) can be found on [this tutorial](http://blog.ezyang.com/2010/06/setting-up-cabal-the-ffi-and-c2hs/).
+By the time I was writing this I was still using Cabal. The changes I made to the cabal file can be found on [this tutorial](http://blog.ezyang.com/2010/06/setting-up-cabal-the-ffi-and-c2hs/).
 
 Similar changes can be done to `package.yaml` by finding their corresponding attributes [on hpack's documentation](https://github.com/sol/hpack#top-level-fields). hpack is the format that defines package.yaml.
 
